@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#050505" />
   <meta name="description" content="lestiva — creative portfolio by Ateist Ema / lestiva." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap" />
   <title>lestiva — Creative Portfolio</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap');
-
+    /* Google Fonts are preconnected in <head>; keep the same font families while avoiding CSS @import chaining. */
     :root {
       --bg: #050505;
       --bg-soft: #0a0a0b;
@@ -179,7 +181,7 @@
     .scroll-cue::before { content: ''; width: 44px; height: 1px; background: rgba(255,255,255,.25); }
 
     main { padding-bottom: 100px; }
-    .section { padding: 96px 0; }
+    .section { padding: 96px 0; contain: layout paint; }
     .section + .section { border-top: 1px solid rgba(255,255,255,.06); }
     .section-head { display: grid; grid-template-columns: minmax(180px, .33fr) minmax(0, 1fr); gap: 48px; align-items: start; }
     .section-index { color: rgba(255,255,255,.32); font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; padding-top: 10px; }
@@ -192,6 +194,7 @@
       display: flex;
       gap: 16px;
       overflow-x: auto;
+      overscroll-behavior-x: contain;
       scroll-snap-type: none;
       padding: 4px 2px 14px;
       margin: 0 -2px;
@@ -201,7 +204,6 @@
     }
     .gallery::-webkit-scrollbar { display: none; }
     .gallery.is-dragging { scroll-snap-type: none; }
-    .gallery.is-paused { scroll-behavior: auto; }
     .gallery-card {
       flex: 0 0 min(72vw, 430px);
       cursor: pointer;
@@ -213,13 +215,15 @@
       border-radius: var(--radius);
       background: #0e0e0f;
       transition: transform 420ms var(--ease), border-color 420ms var(--ease), box-shadow 420ms var(--ease);
+      contain: paint;
     }
-    .gallery-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
     .gallery-card img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; pointer-events: none; transition: transform 700ms var(--ease), filter 700ms var(--ease); }
-    .gallery-card:hover img { transform: scale(1.035); filter: saturate(.93) brightness(1.04); }
+    @media (hover: hover) and (pointer: fine) {
+      .gallery-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+      .gallery-card:hover img { transform: scale(1.035); filter: saturate(.93) brightness(1.04); }
+    }
     .gallery-sheen { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.34)); pointer-events: none; }
     .gallery-meta { position: absolute; left: 16px; bottom: 14px; font-size: .7rem; color: rgba(255,255,255,.54); letter-spacing: .14em; text-transform: uppercase; pointer-events: none; }
-    .gallery-controls { display: none !important; }
     .icon-btn {
       width: 42px; height: 42px; border: 1px solid var(--line); background: rgba(255,255,255,.03); border-radius: 999px;
       display: grid; place-items: center; cursor: pointer; transition: background 240ms ease, border-color 240ms ease, transform 240ms ease;
@@ -395,8 +399,7 @@
       .quote { font-size: .88rem; }
       .gallery-shell { margin-top: 40px; }
       .gallery-card { flex-basis: 88vw; border-radius: 20px; }
-      .gallery-controls { display: none !important; }
-      .player { gap: 14px; border-radius: 22px; padding: 14px; }
+        .player { gap: 14px; border-radius: 22px; padding: 14px; }
       .album { width: 72px; border-radius: 14px; }
       .track-title { font-size: .92rem; }
       .player-controls { gap: 6px; }
@@ -447,10 +450,10 @@
 
           <div class="gallery-shell" data-gallery="content">
             <div class="gallery">
-              <button class="gallery-card" type="button" data-lightbox="foto1.png" data-caption="Content Creator — 01"><img src="foto1.png" alt="Content creator work 1" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto2.png" data-caption="Content Creator — 02"><img src="foto2.png" alt="Content creator work 2" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto3.png" data-caption="Content Creator — 03"><img src="foto3.png" alt="Content creator work 3" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto4.png" data-caption="Content Creator — 04"><img src="foto4.png" alt="Content creator work 4" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto1.png" data-caption="Content Creator — 01"><img src="foto1.png" alt="Content creator work 1" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto2.png" data-caption="Content Creator — 02"><img src="foto2.png" alt="Content creator work 2" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto3.png" data-caption="Content Creator — 03"><img src="foto3.png" alt="Content creator work 3" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto4.png" data-caption="Content Creator — 04"><img src="foto4.png" alt="Content creator work 4" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
             </div>
           </div>
         </div>
@@ -469,10 +472,10 @@
 
           <div class="gallery-shell" data-gallery="web">
             <div class="gallery">
-              <button class="gallery-card" type="button" data-lightbox="foto5.png" data-caption="Web Development — 01"><img src="foto5.png" alt="Web development work 1" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto6.png" data-caption="Web Development — 02"><img src="foto6.png" alt="Web development work 2" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto7.png" data-caption="Web Development — 03"><img src="foto7.png" alt="Web development work 3" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto8.png" data-caption="Web Development — 04"><img src="foto8.png" alt="Web development work 4" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto5.png" data-caption="Web Development — 01"><img src="foto5.png" alt="Web development work 1" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto6.png" data-caption="Web Development — 02"><img src="foto6.png" alt="Web development work 2" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto7.png" data-caption="Web Development — 03"><img src="foto7.png" alt="Web development work 3" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto8.png" data-caption="Web Development — 04"><img src="foto8.png" alt="Web development work 4" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
             </div>
           </div>
         </div>
@@ -491,10 +494,10 @@
 
           <div class="gallery-shell" data-gallery="games">
             <div class="gallery">
-              <button class="gallery-card" type="button" data-lightbox="foto9.png" data-caption="Game Development — 01"><img src="foto9.png" alt="Game development work 1" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto10.png" data-caption="Game Development — 02"><img src="foto10.png" alt="Game development work 2" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto11.png" data-caption="Game Development — 03"><img src="foto11.png" alt="Game development work 3" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
-              <button class="gallery-card" type="button" data-lightbox="foto12.png" data-caption="Game Development — 04"><img src="foto12.png" alt="Game development work 4" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto9.png" data-caption="Game Development — 01"><img src="foto9.png" alt="Game development work 1" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto10.png" data-caption="Game Development — 02"><img src="foto10.png" alt="Game development work 2" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto11.png" data-caption="Game Development — 03"><img src="foto11.png" alt="Game development work 3" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto12.png" data-caption="Game Development — 04"><img src="foto12.png" alt="Game development work 4" loading="lazy" decoding="async"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
             </div>
           </div>
         </div>
@@ -511,7 +514,7 @@
 
           <div class="player-wrap">
             <div class="player" aria-label="Music player">
-              <div class="album"><img id="albumArt" src="albumkapagi.png" alt="Album cover"></div>
+              <div class="album"><img id="albumArt" src="albumkapagi.png" alt="Album cover" decoding="async"></div>
               <div class="player-info">
                 <div class="track-title" id="trackTitle">Amore Mio Aiutami - Pierro Piccioni</div>
                 <div class="track-kicker" id="trackKicker">track 01 / 03</div>
@@ -544,15 +547,15 @@
               <h2>contact</h2>
               <div class="contact-block">
                 <a class="contact-link" href="https://www.instagram.com/taha301530/" target="_blank" rel="noopener noreferrer" aria-label="Instagram @taha301530">
-                  <img src="instagram.png" alt="Instagram">
+                  <img src="instagram.png" alt="Instagram" width="22" height="22" decoding="async">
                   <span class="contact-handle">@taha301530</span>
                 </a>
                 <a class="contact-link" href="https://www.youtube.com/@ateistema" target="_blank" rel="noopener noreferrer" aria-label="YouTube @ateistema">
-                  <img src="youtube.png" alt="YouTube">
+                  <img src="youtube.png" alt="YouTube" width="22" height="22" decoding="async">
                   <span class="contact-handle">@ateistema</span>
                 </a>
                 <div class="contact-link" aria-label="Discord @lestiva">
-                  <img src="discord.png" alt="Discord">
+                  <img src="discord.png" alt="Discord" width="22" height="22" decoding="async">
                   <span class="contact-handle">@lestiva</span>
                 </div>
               </div>
@@ -572,7 +575,7 @@
   <dialog class="lightbox" id="lightbox" aria-label="Image preview">
     <div class="lightbox-inner">
       <button class="icon-btn lightbox-close" id="lightboxClose" type="button" aria-label="Close image">×</button>
-      <img id="lightboxImage" src="" alt="Expanded portfolio image">
+      <img id="lightboxImage" src="" alt="Expanded portfolio image" decoding="async">
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
   </dialog>
@@ -638,6 +641,8 @@
         if (orbitFrame) cancelAnimationFrame(orbitFrame);
         loader.classList.add('is-done');
         site.classList.add('is-visible');
+        siteReadyForGallery = true;
+        scheduleGalleryFrame();
         document.querySelectorAll('.reveal').forEach((el, i) => {
           setTimeout(() => el.classList.add('is-revealed'), 140 + i * 90);
         });
@@ -651,104 +656,128 @@
       // Absolute safety fallback in case the browser is under unusual load.
       setTimeout(finishLoader, 5200);
 
-      // Galleries: continuous left↔right travel + manual drag/swipe.
-      // A tap opens the exact image in the fullscreen lightbox; a drag never opens it.
+      // Galleries: one shared animation loop, visibility-aware, cached measurements, and manual drag/swipe.
+      let siteReadyForGallery = false;
+      let lightboxIsOpen = false;
+      // This preserves the same continuous left↔right motion while avoiding three independent rAF loops.
+      const galleryStates = [];
+      const galleryVisibility = new IntersectionObserver(entries => {
+        let changed = false;
+        entries.forEach(entry => {
+          const state = entry.target.__galleryState;
+          if (state) {
+            state.inViewport = entry.isIntersecting;
+            changed = true;
+          }
+        });
+        if (changed) document.dispatchEvent(new Event('galleryvisibilitychange'));
+      }, { rootMargin: '240px 0px' });
+
       document.querySelectorAll('[data-gallery]').forEach(shell => {
         const gallery = shell.querySelector('.gallery');
-        let isPointerDown = false;
-        let hasDragged = false;
-        let startX = 0;
-        let startScroll = 0;
-        let pressedCard = null;
-        let lastTime = performance.now();
-        const speed = 0.10; // px/ms
-        let velocity = speed;
-        let resumeAt = 0;
-        let blockClickUntil = 0;
-
-        const maxScroll = () => Math.max(0, gallery.scrollWidth - gallery.clientWidth);
-
-        const frame = now => {
-          const dt = Math.min(32, now - lastTime);
-          lastTime = now;
-          const max = maxScroll();
-
-          if (!isPointerDown && now >= resumeAt && max > 1) {
-            const next = gallery.scrollLeft + velocity * dt;
-            if (next >= max) {
-              gallery.scrollLeft = max;
-              velocity = -speed;
-            } else if (next <= 0) {
-              gallery.scrollLeft = 0;
-              velocity = speed;
-            } else {
-              gallery.scrollLeft = next;
-            }
+        const state = {
+          gallery,
+          isPointerDown: false,
+          hasDragged: false,
+          startX: 0,
+          startScroll: 0,
+          pressedCard: null,
+          lastTime: performance.now(),
+          speed: 0.10,
+          velocity: 0.10,
+          resumeAt: 0,
+          maxScroll: 0,
+          inViewport: false,
+          measure() {
+            this.maxScroll = Math.max(0, gallery.scrollWidth - gallery.clientWidth);
+            if (gallery.scrollLeft > this.maxScroll) gallery.scrollLeft = this.maxScroll;
           }
-          requestAnimationFrame(frame);
         };
-        requestAnimationFrame(frame);
+        gallery.__galleryState = state;
+        galleryStates.push(state);
+        galleryVisibility.observe(gallery);
+        // Start the shared loop once this gallery has been measured/observed.
+
+        const resizeObserver = new ResizeObserver(() => state.measure());
+        resizeObserver.observe(gallery);
+        state.measure();
 
         gallery.addEventListener('pointerdown', e => {
           if (e.pointerType === 'mouse' && e.button !== 0) return;
-          isPointerDown = true;
-          hasDragged = false;
-          startX = e.clientX;
-          startScroll = gallery.scrollLeft;
-          pressedCard = e.target.closest?.('.gallery-card[data-lightbox]') || null;
+          state.isPointerDown = true;
+          state.hasDragged = false;
+          state.startX = e.clientX;
+          state.startScroll = gallery.scrollLeft;
+          state.pressedCard = e.target.closest?.('.gallery-card[data-lightbox]') || null;
           gallery.classList.add('is-dragging');
-          if (gallery.setPointerCapture) gallery.setPointerCapture(e.pointerId);
-        });
+          gallery.setPointerCapture?.(e.pointerId);
+        }, { passive: true });
 
         gallery.addEventListener('pointermove', e => {
-          if (!isPointerDown) return;
-          const dx = e.clientX - startX;
-          if (Math.abs(dx) > 8) hasDragged = true;
-          const max = maxScroll();
-          gallery.scrollLeft = Math.max(0, Math.min(max, startScroll - dx));
-        });
+          if (!state.isPointerDown) return;
+          const dx = e.clientX - state.startX;
+          if (Math.abs(dx) > 8) state.hasDragged = true;
+          gallery.scrollLeft = Math.max(0, Math.min(state.maxScroll, state.startScroll - dx));
+        }, { passive: true });
 
-        gallery.addEventListener('pointerup', e => {
-          if (!isPointerDown) return;
-          const tappedCard = pressedCard;
-          const dragged = hasDragged;
-          isPointerDown = false;
+        const endPointer = shouldOpen => {
+          if (!state.isPointerDown) return;
+          const tappedCard = state.pressedCard;
+          const dragged = state.hasDragged;
+          state.isPointerDown = false;
           gallery.classList.remove('is-dragging');
-          resumeAt = performance.now() + (dragged ? 140 : 60);
-          if (!dragged && tappedCard) {
-            const now = performance.now();
-            blockClickUntil = now + 500;
-            tappedCard.classList.add('is-opening');
+          state.resumeAt = performance.now() + (dragged ? 160 : 80);
+          state.pressedCard = null;
+          if (shouldOpen && !dragged && tappedCard) {
             window.openPortfolioImage(tappedCard);
-            setTimeout(() => tappedCard.classList.remove('is-opening'), 240);
-          } else if (dragged) {
-            blockClickUntil = performance.now() + 500;
+            tappedCard.classList.add('is-opening');
+            setTimeout(() => tappedCard.classList.remove('is-opening'), 220);
           }
-          pressedCard = null;
-        });
+        };
 
-        gallery.addEventListener('pointercancel', () => {
-          isPointerDown = false;
-          pressedCard = null;
-          gallery.classList.remove('is-dragging');
-          resumeAt = performance.now() + 140;
-        });
+        gallery.addEventListener('pointerup', () => endPointer(true), { passive: true });
+        gallery.addEventListener('pointercancel', () => endPointer(false), { passive: true });
 
-        gallery.querySelectorAll('.gallery-card[data-lightbox]').forEach(card => {
-          card.addEventListener('click', e => {
-            // Pointer interaction is handled on pointerup above.
-            // Keep keyboard activation fully accessible.
-            if (performance.now() < blockClickUntil) {
-              e.preventDefault();
-              e.stopPropagation();
-              return;
-            }
-            if (e.detail === 0) {
-              window.openPortfolioImage(card);
-            }
-          });
+        // Keyboard activation on the existing button elements still emits a click with detail === 0.
+        gallery.addEventListener('click', e => {
+          const card = e.target.closest?.('.gallery-card[data-lightbox]');
+          if (card && e.detail === 0) window.openPortfolioImage(card);
         });
       });
+
+      let galleryFrame = 0;
+      let lastGalleryTime = performance.now();
+      const hasActiveGallery = () => siteReadyForGallery && !document.hidden && !lightboxIsOpen && galleryStates.some(state => state.inViewport && state.maxScroll > 1);
+      const scheduleGalleryFrame = () => {
+        if (!galleryFrame && hasActiveGallery()) galleryFrame = requestAnimationFrame(animateGalleries);
+      };
+      const animateGalleries = now => {
+        galleryFrame = 0;
+        const dt = Math.min(32, Math.max(0, now - lastGalleryTime));
+        lastGalleryTime = now;
+        if (!document.hidden) {
+          galleryStates.forEach(state => {
+            if (!state.inViewport || state.isPointerDown || now < state.resumeAt || state.maxScroll <= 1) return;
+            const next = state.gallery.scrollLeft + state.velocity * dt;
+            if (next >= state.maxScroll) {
+              state.gallery.scrollLeft = state.maxScroll;
+              state.velocity = -state.speed;
+            } else if (next <= 0) {
+              state.gallery.scrollLeft = 0;
+              state.velocity = state.speed;
+            } else {
+              state.gallery.scrollLeft = next;
+            }
+          });
+        }
+        scheduleGalleryFrame();
+      };
+      document.addEventListener('galleryvisibilitychange', scheduleGalleryFrame);
+      scheduleGalleryFrame();
+      document.addEventListener('visibilitychange', () => {
+        lastGalleryTime = performance.now();
+        if (!document.hidden) scheduleGalleryFrame();
+      }, { passive: true });
 
       // Fullscreen image viewer: native <dialog> gives us a true modal top layer and Esc support.
       const lightbox = document.getElementById('lightbox');
@@ -764,12 +793,15 @@
         lightboxCaption.textContent = caption || '';
         previousBodyOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
+        lightboxIsOpen = true;
         if (!lightbox.open) lightbox.showModal();
         requestAnimationFrame(() => lightboxClose.focus({ preventScroll: true }));
       }
 
       function closeLightbox() {
+        lightboxIsOpen = false;
         if (lightbox.open) lightbox.close();
+        scheduleGalleryFrame();
       }
 
       window.openPortfolioImage = card => {
@@ -796,8 +828,10 @@
       });
 
       lightbox.addEventListener('close', () => {
+        lightboxIsOpen = false;
         document.body.style.overflow = previousBodyOverflow;
         lightboxImage.removeAttribute('src');
+        scheduleGalleryFrame();
       });
 
       // Reveal sections with IntersectionObserver after loader.
@@ -850,12 +884,20 @@
         });
       }
 
+      let progressFrame = 0;
       function setProgress() {
         const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
         progress.value = pct;
         progress.style.setProperty('--progress', pct + '%');
         currentTime.textContent = formatTime(audio.currentTime);
         totalTime.textContent = formatTime(audio.duration);
+      }
+      function scheduleProgress() {
+        if (progressFrame) return;
+        progressFrame = requestAnimationFrame(() => {
+          progressFrame = 0;
+          setProgress();
+        });
       }
 
       function setTrack(index, autoplay = false) {
@@ -899,7 +941,7 @@
       });
       volume.addEventListener('input', () => { audio.volume = Number(volume.value); });
       audio.volume = Number(volume.value);
-      audio.addEventListener('timeupdate', setProgress);
+      audio.addEventListener('timeupdate', scheduleProgress);
       audio.addEventListener('loadedmetadata', setProgress);
       audio.addEventListener('play', updatePlayButton);
       audio.addEventListener('pause', updatePlayButton);
