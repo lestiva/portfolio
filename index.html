@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050505" />
+  <meta name="description" content="lestiva — creative portfolio by Ateist Ema / lestiva." />
+  <title>lestiva — Creative Portfolio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap');
+
+    :root {
+      --bg: #050505;
+      --bg-soft: #0a0a0b;
+      --panel: rgba(255,255,255,.035);
+      --panel-strong: rgba(255,255,255,.055);
+      --line: rgba(255,255,255,.1);
+      --line-strong: rgba(255,255,255,.16);
+      --text: #f5f5f2;
+      --muted: #a4a4a4;
+      --dim: #727272;
+      --max: 1180px;
+      --radius: 24px;
+      --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 5%, rgba(255,255,255,.035), transparent 23rem),
+        radial-gradient(circle at 90% 52%, rgba(255,255,255,.025), transparent 28rem),
+        linear-gradient(180deg, #050505 0%, #070707 40%, #050505 100%);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .14;
+      background-image: linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 65%);
+      z-index: 0;
+    }
+
+    ::selection { background: rgba(255,255,255,.18); }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    /* Loader — JavaScript-driven orbit, independent from reduced-motion CSS rules */
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 44%, rgba(255,255,255,.055), transparent 19rem),
+        linear-gradient(180deg, #050505 0%, #020202 100%);
+      transition: opacity 850ms var(--ease), visibility 850ms;
+    }
+    .loader.is-done { opacity: 0; visibility: hidden; }
+    .loader-inner {
+      position: relative;
+      z-index: 2;
+      width: min(90vw, 760px);
+      text-align: center;
+      padding: 24px;
+    }
+    .loader-brand {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(2.4rem, 7vw, 5.8rem);
+      letter-spacing: -.07em;
+      font-weight: 600;
+      animation: brandIn 1400ms var(--ease) both;
+    }
+    .quote {
+      margin: 18px auto 0;
+      max-width: 720px;
+      color: rgba(255,255,255,.68);
+      font-size: clamp(.9rem, 1.7vw, 1.05rem);
+      line-height: 1.65;
+      letter-spacing: .01em;
+      filter: blur(10px);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: quoteIn 1200ms 350ms var(--ease) forwards;
+    }
+
+    .loader-orbit {
+      --orbit-size: 104px;
+      position: relative;
+      width: var(--orbit-size);
+      height: var(--orbit-size);
+      margin: 32px auto 0;
+      border-radius: 50%;
+    }
+    .loader-orbit::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      margin: -2.5px 0 0 -2.5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 0 16px rgba(255,255,255,.5), 0 0 36px rgba(255,255,255,.12);
+    }
+    .loader-orbit-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      margin: -3.5px 0 0 -3.5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 12px rgba(255,255,255,.82), 0 0 28px rgba(255,255,255,.2);
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+    .loader-orbit-dot.tail {
+      width: 5px;
+      height: 5px;
+      margin: -2.5px 0 0 -2.5px;
+    }
+
+    @keyframes brandIn { from { opacity: 0; transform: translateY(14px); filter: blur(12px); } to { opacity: 1; transform: none; filter: blur(0); } }
+    @keyframes quoteIn { to { filter: blur(0); opacity: 1; transform: none; } }
+
+    .site { position: relative; z-index: 1; opacity: 0; transform: translateY(10px); transition: opacity 1000ms var(--ease), transform 1000ms var(--ease); }
+    .site.is-visible { opacity: 1; transform: none; }
+
+    .container { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; }
+
+    header {
+      min-height: 55vh;
+      display: grid;
+      align-items: center;
+      position: relative;
+    }
+    .hero { padding: 72px 0 46px; }
+    .eyebrow { color: rgba(255,255,255,.5); font-size: .86rem; letter-spacing: .06em; }
+    .hero-title {
+      margin: 12px 0 12px;
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(4.3rem, 12vw, 10.5rem);
+      line-height: .86;
+      letter-spacing: -.08em;
+      font-weight: 600;
+      max-width: 1000px;
+    }
+    .hero-title span { color: rgba(255,255,255,.34); }
+    .hero-copy { max-width: 560px; color: #c1c1c1; font-size: clamp(.95rem, 1.6vw, 1.08rem); line-height: 1.55; }
+    .hero-line { width: min(380px, 55vw); height: 1px; margin-top: 36px; background: linear-gradient(90deg, rgba(255,255,255,.5), transparent); }
+    .scroll-cue { margin-top: 50px; display: inline-flex; gap: 12px; align-items: center; color: rgba(255,255,255,.42); font-size: .78rem; text-transform: uppercase; letter-spacing: .16em; }
+    .scroll-cue::before { content: ''; width: 44px; height: 1px; background: rgba(255,255,255,.25); }
+
+    main { padding-bottom: 100px; }
+    .section { padding: 96px 0; }
+    .section + .section { border-top: 1px solid rgba(255,255,255,.06); }
+    .section-head { display: grid; grid-template-columns: minmax(180px, .33fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+    .section-index { color: rgba(255,255,255,.32); font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; padding-top: 10px; }
+    .section-copy .role { color: rgba(255,255,255,.58); font-size: .86rem; text-transform: uppercase; letter-spacing: .12em; }
+    .section-copy h2 { margin: 10px 0 16px; font-family: 'Manrope', sans-serif; font-size: clamp(2rem, 5vw, 4.2rem); line-height: .95; letter-spacing: -.055em; font-weight: 600; }
+    .section-copy p { max-width: 760px; margin: 0; color: #a9a9a9; font-size: clamp(1rem, 1.7vw, 1.12rem); line-height: 1.85; }
+
+    .gallery-shell { margin-top: 54px; position: relative; }
+    .gallery {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: none;
+      padding: 4px 2px 14px;
+      margin: 0 -2px;
+      scrollbar-width: none;
+      user-select: none;
+      touch-action: pan-x;
+    }
+    .gallery::-webkit-scrollbar { display: none; }
+    .gallery.is-dragging { scroll-snap-type: none; }
+    .gallery.is-paused { scroll-behavior: auto; }
+    .gallery-card {
+      flex: 0 0 min(72vw, 430px);
+      cursor: pointer;
+      aspect-ratio: 4 / 3;
+      scroll-snap-align: none;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius);
+      background: #0e0e0f;
+      transition: transform 420ms var(--ease), border-color 420ms var(--ease), box-shadow 420ms var(--ease);
+    }
+    .gallery-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+    .gallery-card img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; pointer-events: none; transition: transform 700ms var(--ease), filter 700ms var(--ease); }
+    .gallery-card:hover img { transform: scale(1.035); filter: saturate(.93) brightness(1.04); }
+    .gallery-sheen { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.34)); pointer-events: none; }
+    .gallery-meta { position: absolute; left: 16px; bottom: 14px; font-size: .7rem; color: rgba(255,255,255,.54); letter-spacing: .14em; text-transform: uppercase; pointer-events: none; }
+    .gallery-controls { display: none !important; }
+    .icon-btn {
+      width: 42px; height: 42px; border: 1px solid var(--line); background: rgba(255,255,255,.03); border-radius: 999px;
+      display: grid; place-items: center; cursor: pointer; transition: background 240ms ease, border-color 240ms ease, transform 240ms ease;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,.075); border-color: var(--line-strong); transform: translateY(-1px); }
+    .icon-btn:active { transform: translateY(0); }
+
+    .player-wrap { margin-top: 72px; }
+    .player {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 22px; align-items: center;
+      padding: 20px; border: 1px solid rgba(255,255,255,.1); border-radius: 28px;
+      background: linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+      box-shadow: 0 28px 80px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.035);
+      backdrop-filter: blur(16px);
+    }
+    .album { width: 88px; aspect-ratio: 1; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); background: #111; flex: none; }
+    .album img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .track-title { font-size: 1rem; font-weight: 600; line-height: 1.35; }
+    .track-kicker { margin-top: 6px; color: #777; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; }
+    .player-progress { margin-top: 18px; }
+    .range {
+      width: 100%; height: 4px; appearance: none; -webkit-appearance: none; border-radius: 999px; outline: none; cursor: pointer;
+      background: linear-gradient(90deg, rgba(255,255,255,.9) var(--progress, 0%), rgba(255,255,255,.12) var(--progress, 0%));
+    }
+    .range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0 0 5px rgba(255,255,255,.04); }
+    .range::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: #fff; }
+    .time-row { margin-top: 8px; display: flex; justify-content: space-between; color: #686868; font-size: .68rem; letter-spacing: .04em; }
+    .player-controls { display: flex; gap: 8px; align-items: center; }
+    .play-btn { width: 52px; height: 52px; background: #f3f3f0; color: #050505; border-color: transparent; }
+    .play-btn:hover { background: #fff; }
+    .volume-wrap { display: flex; align-items: center; gap: 10px; }
+    .volume { width: 96px; }
+    .track-list { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .track-pill { border: 1px solid rgba(255,255,255,.08); background: transparent; color: #8b8b8b; padding: 8px 11px; border-radius: 999px; font-size: .72rem; cursor: pointer; transition: all 220ms ease; }
+    .track-pill:hover, .track-pill.is-active { color: #efefec; border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+
+
+    .contact-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 34px;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+      width: fit-content;
+      padding: 10px 14px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 14px;
+      background: rgba(255,255,255,.025);
+      transition: transform 280ms var(--ease), border-color 280ms var(--ease), background 280ms var(--ease);
+    }
+    .contact-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.045);
+    }
+    .contact-link img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+    .contact-handle {
+      font-size: .98rem;
+      color: rgba(255,255,255,.82);
+      letter-spacing: .01em;
+    }
+    @media (max-width: 600px) {
+      .contact-block { margin-top: 26px; }
+      .contact-link { padding: 10px 12px; }
+    }
+
+    footer { padding: 30px 0 48px; color: #555; font-size: .74rem; display: flex; justify-content: space-between; gap: 20px; }
+
+    /* Lightbox — native modal dialog for reliable fullscreen image viewing */
+    .lightbox {
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      overflow: hidden;
+    }
+    .lightbox::backdrop {
+      background: rgba(0,0,0,.96);
+      backdrop-filter: blur(14px);
+    }
+    .lightbox[open] .lightbox-inner {
+      animation: lightboxIn 260ms var(--ease) both;
+    }
+    .lightbox-inner {
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      padding: 18px;
+      display: grid;
+      place-items: center;
+      cursor: zoom-out;
+    }
+    .lightbox img {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: calc(100vw - 36px);
+      max-height: calc(100vh - 36px);
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 40px 100px rgba(0,0,0,.68);
+      cursor: zoom-out;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 2;
+      cursor: pointer;
+    }
+    .lightbox-caption {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,.55);
+      font-size: .7rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+      max-width: calc(100vw - 40px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @keyframes lightboxIn {
+      from { opacity: 0; transform: translateY(10px) scale(.985); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 900ms var(--ease), transform 900ms var(--ease); }
+    .reveal.is-revealed { opacity: 1; transform: none; }
+
+    @media (max-width: 820px) {
+      .container { width: min(calc(100% - 28px), var(--max)); }
+      header { min-height: 54vh; }
+      .hero { padding-top: 72px; padding-bottom: 40px; }
+      .section { padding: 74px 0; }
+      .section-head { grid-template-columns: 1fr; gap: 18px; }
+      .section-index { padding-top: 0; }
+      .gallery-card { flex-basis: 82vw; }
+      .player { grid-template-columns: auto 1fr; }
+      .player-controls { grid-column: 1 / -1; justify-content: space-between; }
+      .volume-wrap { width: 100%; }
+      .volume { width: 100%; }
+      footer { flex-direction: column; }
+    }
+
+    @media (max-width: 560px) {
+      .hero-title { font-size: clamp(3.6rem, 20vw, 5.8rem); }
+      .quote { font-size: .88rem; }
+      .gallery-shell { margin-top: 40px; }
+      .gallery-card { flex-basis: 88vw; border-radius: 20px; }
+      .gallery-controls { display: none !important; }
+      .player { gap: 14px; border-radius: 22px; padding: 14px; }
+      .album { width: 72px; border-radius: 14px; }
+      .track-title { font-size: .92rem; }
+      .player-controls { gap: 6px; }
+      .icon-btn { width: 40px; height: 40px; }
+      .play-btn { width: 48px; height: 48px; }
+      .lightbox { padding: 14px; }
+      .lightbox-close { top: 0; right: 0; }
+      .hero-copy { font-size: .98rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .site *, .site { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader-inner">
+      <div class="loader-brand">lestiva</div>
+      <div class="quote" id="loadingQuote"></div>
+      <div class="loader-orbit" id="loaderOrbit" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="site" id="site">
+    <header class="container">
+      <div class="hero">
+        <h1 class="hero-title">lestiva</h1>
+        <div class="hero-copy">A library of things that interest me</div>
+      </div>
+    </header>
+
+    <main id="work">
+      <section class="section reveal" id="content-creator">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-index">01 / Content Creator</div>
+            <div class="section-copy">
+              <div class="role">philosophical content creator</div>
+              <h2>Ateist Ema</h2>
+              <p>By uploading videos of prominent content creators in the field of philosophy, I reached a total of 450,000 followers and 350 million views.</p>
+            </div>
+          </div>
+
+          <div class="gallery-shell" data-gallery="content">
+            <div class="gallery">
+              <button class="gallery-card" type="button" data-lightbox="foto1.png" data-caption="Content Creator — 01"><img src="foto1.png" alt="Content creator work 1" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto2.png" data-caption="Content Creator — 02"><img src="foto2.png" alt="Content creator work 2" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto3.png" data-caption="Content Creator — 03"><img src="foto3.png" alt="Content creator work 3" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto4.png" data-caption="Content Creator — 04"><img src="foto4.png" alt="Content creator work 4" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="web-developer">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-index">02 / Web Developer</div>
+            <div class="section-copy">
+              <div class="role">Web Developer - Vibe coding</div>
+              <h2>lestiva</h2>
+              <p>Applying prompt engineering principles, I engineered custom applications, portfolio platforms, and personalized digital experiences tailored for friends' special occasions.</p>
+            </div>
+          </div>
+
+          <div class="gallery-shell" data-gallery="web">
+            <div class="gallery">
+              <button class="gallery-card" type="button" data-lightbox="foto5.png" data-caption="Web Development — 01"><img src="foto5.png" alt="Web development work 1" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto6.png" data-caption="Web Development — 02"><img src="foto6.png" alt="Web development work 2" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto7.png" data-caption="Web Development — 03"><img src="foto7.png" alt="Web development work 3" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto8.png" data-caption="Web Development — 04"><img src="foto8.png" alt="Web development work 4" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="game-developer">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-index">03 / Game Developer</div>
+            <div class="section-copy">
+              <div class="role">Game Developer</div>
+              <h2>lestiva</h2>
+              <p>I built 3D game maps using 3D models, designed UIs for WebGL games, developed games independently in Unity using C#, and collaborated with a JavaScript-based team to contribute to game production for platforms like Poki.com.</p>
+            </div>
+          </div>
+
+          <div class="gallery-shell" data-gallery="games">
+            <div class="gallery">
+              <button class="gallery-card" type="button" data-lightbox="foto9.png" data-caption="Game Development — 01"><img src="foto9.png" alt="Game development work 1" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 01</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto10.png" data-caption="Game Development — 02"><img src="foto10.png" alt="Game development work 2" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 02</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto11.png" data-caption="Game Development — 03"><img src="foto11.png" alt="Game development work 3" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 03</span></button>
+              <button class="gallery-card" type="button" data-lightbox="foto12.png" data-caption="Game Development — 04"><img src="foto12.png" alt="Game development work 4" loading="lazy"><span class="gallery-sheen"></span><span class="gallery-meta">view / 04</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="music">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-index">04 / Soundtrack</div>
+            <div class="section-copy">
+              <h2>music</h2>
+            </div>
+          </div>
+
+          <div class="player-wrap">
+            <div class="player" aria-label="Music player">
+              <div class="album"><img id="albumArt" src="albumkapagi.png" alt="Album cover"></div>
+              <div class="player-info">
+                <div class="track-title" id="trackTitle">Amore Mio Aiutami - Pierro Piccioni</div>
+                <div class="track-kicker" id="trackKicker">track 01 / 03</div>
+                <div class="player-progress">
+                  <input id="progress" class="range" type="range" min="0" max="100" step="0.1" value="0" aria-label="Song progress">
+                  <div class="time-row"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
+                </div>
+              </div>
+              <div class="player-controls">
+                <button class="icon-btn" id="prevTrack" type="button" aria-label="Previous track">◀</button>
+                <button class="icon-btn play-btn" id="playPause" type="button" aria-label="Play">▶</button>
+                <button class="icon-btn" id="nextTrack" type="button" aria-label="Next track">▶▶</button>
+                <div class="volume-wrap">
+                  <span aria-hidden="true" style="font-size:.75rem;color:#626262">VOL</span>
+                  <input id="volume" class="range volume" type="range" min="0" max="1" step="0.01" value="0.82" aria-label="Volume">
+                </div>
+              </div>
+            </div>
+            <div class="track-list" id="trackList"></div>
+          </div>
+          <audio id="audio" preload="metadata"></audio>
+        </div>
+      </section>
+
+      <section class="section reveal" id="contact">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-index">05 / Contact</div>
+            <div class="section-copy">
+              <h2>contact</h2>
+              <div class="contact-block">
+                <a class="contact-link" href="https://www.instagram.com/taha301530/" target="_blank" rel="noopener noreferrer" aria-label="Instagram @taha301530">
+                  <img src="instagram.png" alt="Instagram">
+                  <span class="contact-handle">@taha301530</span>
+                </a>
+                <a class="contact-link" href="https://www.youtube.com/@ateistema" target="_blank" rel="noopener noreferrer" aria-label="YouTube @ateistema">
+                  <img src="youtube.png" alt="YouTube">
+                  <span class="contact-handle">@ateistema</span>
+                </a>
+                <div class="contact-link" aria-label="Discord @lestiva">
+                  <img src="discord.png" alt="Discord">
+                  <span class="contact-handle">@lestiva</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="container">
+      <div>lestiva © 2026</div>
+      <div>creative / code / play</div>
+    </footer>
+  </div>
+
+  <dialog class="lightbox" id="lightbox" aria-label="Image preview">
+    <div class="lightbox-inner">
+      <button class="icon-btn lightbox-close" id="lightboxClose" type="button" aria-label="Close image">×</button>
+      <img id="lightboxImage" src="" alt="Expanded portfolio image">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </dialog>
+
+
+  <script>
+    (() => {
+      'use strict';
+
+      const quotes = [
+        'Güneş daha batmadığı için ilerlemeye devam edeceğiz.',
+        'Dünyada çok fazla canavar türü var, biri sana da denk gelebilir.',
+        'Belki aradığın şey henüz karşına çıkmadı.',
+        'Bazen sadece var olmak bile büyük bir şeydir.',
+        'Yıldızları görebilmek için bazen zifiri karanlığın içine düşmek gerekir.',
+        'Yaşamını devam ettirme motivasyonun nedir?',
+        'Belki de bugün verdiğin en iyi karar hayatına son vermemektir.'
+      ];
+
+      const loader = document.getElementById('loader');
+      const site = document.getElementById('site');
+      document.getElementById('loadingQuote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+      // Loader motion uses requestAnimationFrame so the moving light is independent of CSS
+      // animation settings. The browser calls the loop before each repaint for smooth motion.
+      const orbit = document.getElementById('loaderOrbit');
+      const orbitDots = Array.from({ length: 10 }, (_, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'loader-orbit-dot' + (i ? ' tail' : '');
+        orbit.appendChild(dot);
+        return dot;
+      });
+
+      let orbitFrame = 0;
+      let orbitStart = performance.now();
+      let loaderFinished = false;
+
+      function animateLoaderOrbit(now) {
+        const elapsed = now - orbitStart;
+        const duration = 1450;
+        const radius = Math.max(30, orbit.clientWidth * 0.5 - 8);
+        const baseAngle = (elapsed % duration) / duration * Math.PI * 2;
+
+        orbitDots.forEach((dot, i) => {
+          const angle = baseAngle - i * 0.20;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          const fade = 1 - i / orbitDots.length;
+          const scale = 1 - i * 0.055;
+          dot.style.opacity = String(Math.max(.08, fade));
+          dot.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${Math.max(.55, scale)})`;
+        });
+
+        if (!loaderFinished) orbitFrame = requestAnimationFrame(animateLoaderOrbit);
+      }
+
+      orbitFrame = requestAnimationFrame(animateLoaderOrbit);
+
+      // Loading screen: a visible 3-second cinematic sequence that cannot hang on media/network loading.
+      const finishLoader = () => {
+        if (loaderFinished) return;
+        loaderFinished = true;
+        if (orbitFrame) cancelAnimationFrame(orbitFrame);
+        loader.classList.add('is-done');
+        site.classList.add('is-visible');
+        document.querySelectorAll('.reveal').forEach((el, i) => {
+          setTimeout(() => el.classList.add('is-revealed'), 140 + i * 90);
+        });
+      };
+
+      // Start independently of window.load so broken/slow images or audio can never trap the page on the loader.
+      setTimeout(finishLoader, 3050);
+      document.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => loader.classList.add('is-ready')));
+      }, { once: true });
+      // Absolute safety fallback in case the browser is under unusual load.
+      setTimeout(finishLoader, 5200);
+
+      // Galleries: continuous left↔right travel + manual drag/swipe.
+      // A tap opens the exact image in the fullscreen lightbox; a drag never opens it.
+      document.querySelectorAll('[data-gallery]').forEach(shell => {
+        const gallery = shell.querySelector('.gallery');
+        let isPointerDown = false;
+        let hasDragged = false;
+        let startX = 0;
+        let startScroll = 0;
+        let pressedCard = null;
+        let lastTime = performance.now();
+        const speed = 0.10; // px/ms
+        let velocity = speed;
+        let resumeAt = 0;
+        let blockClickUntil = 0;
+
+        const maxScroll = () => Math.max(0, gallery.scrollWidth - gallery.clientWidth);
+
+        const frame = now => {
+          const dt = Math.min(32, now - lastTime);
+          lastTime = now;
+          const max = maxScroll();
+
+          if (!isPointerDown && now >= resumeAt && max > 1) {
+            const next = gallery.scrollLeft + velocity * dt;
+            if (next >= max) {
+              gallery.scrollLeft = max;
+              velocity = -speed;
+            } else if (next <= 0) {
+              gallery.scrollLeft = 0;
+              velocity = speed;
+            } else {
+              gallery.scrollLeft = next;
+            }
+          }
+          requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+
+        gallery.addEventListener('pointerdown', e => {
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+          isPointerDown = true;
+          hasDragged = false;
+          startX = e.clientX;
+          startScroll = gallery.scrollLeft;
+          pressedCard = e.target.closest?.('.gallery-card[data-lightbox]') || null;
+          gallery.classList.add('is-dragging');
+          if (gallery.setPointerCapture) gallery.setPointerCapture(e.pointerId);
+        });
+
+        gallery.addEventListener('pointermove', e => {
+          if (!isPointerDown) return;
+          const dx = e.clientX - startX;
+          if (Math.abs(dx) > 8) hasDragged = true;
+          const max = maxScroll();
+          gallery.scrollLeft = Math.max(0, Math.min(max, startScroll - dx));
+        });
+
+        gallery.addEventListener('pointerup', e => {
+          if (!isPointerDown) return;
+          const tappedCard = pressedCard;
+          const dragged = hasDragged;
+          isPointerDown = false;
+          gallery.classList.remove('is-dragging');
+          resumeAt = performance.now() + (dragged ? 140 : 60);
+          if (!dragged && tappedCard) {
+            const now = performance.now();
+            blockClickUntil = now + 500;
+            tappedCard.classList.add('is-opening');
+            window.openPortfolioImage(tappedCard);
+            setTimeout(() => tappedCard.classList.remove('is-opening'), 240);
+          } else if (dragged) {
+            blockClickUntil = performance.now() + 500;
+          }
+          pressedCard = null;
+        });
+
+        gallery.addEventListener('pointercancel', () => {
+          isPointerDown = false;
+          pressedCard = null;
+          gallery.classList.remove('is-dragging');
+          resumeAt = performance.now() + 140;
+        });
+
+        gallery.querySelectorAll('.gallery-card[data-lightbox]').forEach(card => {
+          card.addEventListener('click', e => {
+            // Pointer interaction is handled on pointerup above.
+            // Keep keyboard activation fully accessible.
+            if (performance.now() < blockClickUntil) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
+            if (e.detail === 0) {
+              window.openPortfolioImage(card);
+            }
+          });
+        });
+      });
+
+      // Fullscreen image viewer: native <dialog> gives us a true modal top layer and Esc support.
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const lightboxCaption = document.getElementById('lightboxCaption');
+      const lightboxClose = document.getElementById('lightboxClose');
+
+      let previousBodyOverflow = '';
+
+      function openLightbox(src, caption, alt) {
+        lightboxImage.src = src;
+        lightboxImage.alt = alt || 'Expanded portfolio image';
+        lightboxCaption.textContent = caption || '';
+        previousBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        if (!lightbox.open) lightbox.showModal();
+        requestAnimationFrame(() => lightboxClose.focus({ preventScroll: true }));
+      }
+
+      function closeLightbox() {
+        if (lightbox.open) lightbox.close();
+      }
+
+      window.openPortfolioImage = card => {
+        const image = card.querySelector('img');
+        openLightbox(card.dataset.lightbox, card.dataset.caption, image?.alt);
+      };
+
+      document.querySelectorAll('.gallery-card[data-lightbox]').forEach(card => {
+        card.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openLightbox(card.dataset.lightbox, card.dataset.caption, card.querySelector('img')?.alt);
+          }
+        });
+      });
+
+      lightboxClose.addEventListener('click', closeLightbox);
+
+      // Clicking the expanded image OR anywhere on the modal surface closes it.
+      lightbox.addEventListener('click', e => {
+        if (e.target === lightbox || e.target === lightboxImage || e.target === lightbox.querySelector('.lightbox-inner')) {
+          closeLightbox();
+        }
+      });
+
+      lightbox.addEventListener('close', () => {
+        document.body.style.overflow = previousBodyOverflow;
+        lightboxImage.removeAttribute('src');
+      });
+
+      // Reveal sections with IntersectionObserver after loader.
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: .12 });
+      document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+      // Music player.
+      const tracks = [
+        { title: 'Amore Mio Aiutami - Pierro Piccioni', art: 'albumkapagi.png', src: 'muzik.mp3' },
+        { title: 'Light Lights up Light for piano - Yoshihisa Hirano', art: 'albumkapagi2.png', src: 'muzik2.mp3' },
+        { title: 'Dramma della gelosia (Titoli) · Armando Trovajoli', art: 'albumkapagi3.png', src: 'muzik3.mp3' }
+      ];
+      const audio = document.getElementById('audio');
+      const albumArt = document.getElementById('albumArt');
+      const trackTitle = document.getElementById('trackTitle');
+      const trackKicker = document.getElementById('trackKicker');
+      const progress = document.getElementById('progress');
+      const currentTime = document.getElementById('currentTime');
+      const totalTime = document.getElementById('totalTime');
+      const volume = document.getElementById('volume');
+      const playPause = document.getElementById('playPause');
+      const prevTrack = document.getElementById('prevTrack');
+      const nextTrack = document.getElementById('nextTrack');
+      const trackList = document.getElementById('trackList');
+      let currentTrack = 0;
+
+      const formatTime = seconds => {
+        if (!Number.isFinite(seconds)) return '0:00';
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+      };
+
+      function renderTracks() {
+        trackList.innerHTML = '';
+        tracks.forEach((track, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'track-pill' + (i === currentTrack ? ' is-active' : '');
+          btn.textContent = String(i + 1).padStart(2, '0') + ' — ' + track.title;
+          btn.addEventListener('click', () => setTrack(i, true));
+          trackList.appendChild(btn);
+        });
+      }
+
+      function setProgress() {
+        const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+        progress.value = pct;
+        progress.style.setProperty('--progress', pct + '%');
+        currentTime.textContent = formatTime(audio.currentTime);
+        totalTime.textContent = formatTime(audio.duration);
+      }
+
+      function setTrack(index, autoplay = false) {
+        currentTrack = (index + tracks.length) % tracks.length;
+        const track = tracks[currentTrack];
+        audio.src = track.src;
+        albumArt.src = track.art;
+        albumArt.alt = `${track.title} album cover`;
+        trackTitle.textContent = track.title;
+        trackKicker.textContent = `track ${String(currentTrack + 1).padStart(2, '0')} / ${tracks.length}`;
+        progress.value = 0;
+        progress.style.setProperty('--progress', '0%');
+        currentTime.textContent = '0:00';
+        totalTime.textContent = '0:00';
+        renderTracks();
+        if (autoplay) {
+          audio.play().then(() => updatePlayButton()).catch(() => updatePlayButton());
+        } else {
+          updatePlayButton();
+        }
+      }
+
+      function updatePlayButton() {
+        const isPlaying = !audio.paused;
+        playPause.textContent = isPlaying ? 'Ⅱ' : '▶';
+        playPause.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+      }
+
+      playPause.addEventListener('click', async () => {
+        if (!audio.src) setTrack(currentTrack, false);
+        try {
+          if (audio.paused) await audio.play(); else audio.pause();
+        } catch (_) {}
+        updatePlayButton();
+      });
+      prevTrack.addEventListener('click', () => setTrack(currentTrack - 1, true));
+      nextTrack.addEventListener('click', () => setTrack(currentTrack + 1, true));
+      progress.addEventListener('input', () => {
+        if (audio.duration) audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+        setProgress();
+      });
+      volume.addEventListener('input', () => { audio.volume = Number(volume.value); });
+      audio.volume = Number(volume.value);
+      audio.addEventListener('timeupdate', setProgress);
+      audio.addEventListener('loadedmetadata', setProgress);
+      audio.addEventListener('play', updatePlayButton);
+      audio.addEventListener('pause', updatePlayButton);
+      audio.addEventListener('ended', () => setTrack(currentTrack + 1, true));
+      setTrack(0, false);
+
+    })();
+  </script>
+</body>
+</html>
