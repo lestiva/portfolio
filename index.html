@@ -425,8 +425,170 @@
     }
 
   </style>
+
+  <style id="video-glass-theme">
+    /* Additive theme: the original layout, media paths and loader are retained. */
+    body { isolation: isolate; }
+    .video-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background: #211536 url('arkaplan.jpg') center / cover no-repeat;
+    }
+    .video-background video {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transition: opacity 600ms ease;
+    }
+    .video-background.is-playing video { opacity: 1; }
+    .video-background::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(6,4,15,.42), rgba(6,4,15,.57) 55%, rgba(6,4,15,.64));
+    }
+    body::before { z-index: 1; }
+    .site { z-index: 2; }
+    /* The existing loader shares the same continuously playing background video. */
+    .loader { background: rgba(6,4,15,.12); }
+    .hero-title, .section-copy h2 { text-shadow: 0 4px 32px rgba(8,3,20,.24); }
+    .hero-copy, .section-copy p { color: rgba(255,255,255,.8); }
+    .section-index { color: rgba(255,255,255,.62); }
+    .section-copy .role { color: rgba(255,255,255,.72); }
+    footer, .track-kicker, .time-row { color: rgba(255,255,255,.64); }
+
+    :root {
+      --glass-fill: linear-gradient(150deg, rgba(255,255,255,.16), rgba(255,255,255,.045) 58%, rgba(210,185,255,.075));
+      --glass-border: rgba(255,255,255,.24);
+      --glass-shadow: inset 0 1px 0 rgba(255,255,255,.28), inset 0 -1px 0 rgba(255,255,255,.045), 0 5px 20px rgba(13,5,30,.14);
+    }
+    .icon-btn, .track-pill, .contact-link {
+      background: var(--glass-fill);
+      border-color: var(--glass-border);
+      color: #fff;
+      box-shadow: var(--glass-shadow);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      backdrop-filter: blur(12px) saturate(140%);
+      transition: transform 220ms var(--ease), background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .icon-btn { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+    .track-pill { min-height: 44px; max-width: 100%; line-height: 1.5; text-align: left; }
+    .play-btn {
+      color: #fff;
+      background: linear-gradient(145deg, rgba(255,255,255,.28), rgba(225,200,255,.10));
+      border-color: rgba(255,255,255,.42);
+      box-shadow: var(--glass-shadow), 0 0 22px rgba(187,145,255,.15);
+    }
+    .track-pill.is-active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(232,215,255,.24), rgba(204,170,255,.10));
+      border-color: rgba(235,218,255,.5);
+      box-shadow: var(--glass-shadow), 0 0 18px rgba(184,132,255,.12);
+    }
+    .player {
+      background: linear-gradient(140deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
+      border-color: rgba(255,255,255,.23);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 18px 48px rgba(10,4,25,.22);
+      -webkit-backdrop-filter: blur(16px) saturate(130%);
+      backdrop-filter: blur(16px) saturate(130%);
+      min-width: 0;
+    }
+    .player-info { min-width: 0; }
+    .track-title { overflow-wrap: anywhere; }
+    .volume-wrap { min-width: 0; }
+    .range { min-width: 0; }
+    .contact-handle { color: rgba(255,255,255,.92); }
+    .gallery-card { border-color: rgba(255,255,255,.25); box-shadow: 0 8px 28px rgba(11,4,26,.12); }
+    .icon-btn:active, .track-pill:active, .contact-link:active { transform: scale(.97); }
+    :is(.icon-btn, .track-pill, .contact-link, .gallery-card, .range):focus-visible {
+      outline: 2px solid #f1e7ff;
+      outline-offset: 4px;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .icon-btn:hover, .track-pill:hover, .contact-link:hover {
+        background: linear-gradient(140deg, rgba(255,255,255,.24), rgba(222,195,255,.10));
+        border-color: rgba(255,255,255,.48);
+        box-shadow: var(--glass-shadow), 0 0 26px rgba(189,147,255,.2);
+        transform: translateY(-2px);
+      }
+    }
+    @media (max-width: 820px), (pointer: coarse) {
+      .icon-btn, .track-pill, .contact-link {
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+      }
+      .player { -webkit-backdrop-filter: none; backdrop-filter: none; }
+    }
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .icon-btn, .track-pill, .contact-link, .player {
+        background: linear-gradient(145deg, rgba(76,56,104,.82), rgba(36,25,58,.8));
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .video-background video { transition: none; }
+    }
+  </style>
 </head>
 <body>
+  <div class="video-background" id="videoBackground" aria-hidden="true">
+    <video id="backgroundVideo" autoplay muted loop playsinline webkit-playsinline
+      preload="auto" poster="arkaplan.jpg" tabindex="-1"
+      disablepictureinpicture disableremoteplayback
+      data-desktop-src="arkaplan.mp4"
+      data-mobile-src="arkaplan-mobil.mp4"></video>
+  </div>
+  <script>
+    (() => {
+      'use strict';
+      const video = document.getElementById('backgroundVideo');
+      const background = document.getElementById('videoBackground');
+      const connection = navigator.connection;
+      // Select once: resizing/rotating must not download another copy or restart playback.
+      const useMobile = matchMedia('(max-width: 820px)').matches ||
+        matchMedia('(pointer: coarse)').matches || connection?.saveData ||
+        /(^|-)2g$/.test(connection?.effectiveType || '');
+      video.muted = true;
+      video.defaultMuted = true;
+      video.src = useMobile ? video.dataset.mobileSrc : video.dataset.desktopSrc;
+      let pending = false;
+      let pageActive = true;
+      let failed = false;
+      const tryPlay = () => {
+        if (!pageActive || document.hidden || failed || pending || !video.paused) return;
+        pending = true;
+        // Rejections (e.g. iOS Low Power Mode) leave the poster visible and retry on interaction.
+        Promise.resolve(video.play()).catch(() => {}).finally(() => { pending = false; });
+      };
+      video.addEventListener('playing', () => {
+        if (!pageActive || document.hidden) { video.pause(); return; }
+        background.classList.add('is-playing');
+      });
+      video.addEventListener('error', () => {
+        failed = true;
+        background.classList.remove('is-playing');
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) video.pause(); else tryPlay();
+      });
+      window.addEventListener('pagehide', () => { pageActive = false; video.pause(); });
+      window.addEventListener('pageshow', () => { pageActive = true; tryPlay(); });
+      document.addEventListener('pointerdown', tryPlay, { passive: true });
+      document.addEventListener('keydown', tryPlay);
+      video.addEventListener('canplay', tryPlay, { once: true });
+      tryPlay();
+    })();
+  </script>
+
   <div class="noise" aria-hidden="true"></div>
 
   <div class="loader" id="loader" aria-live="polite">
